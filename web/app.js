@@ -162,6 +162,26 @@ function initFlowSimulator() {
   const codeBox = document.getElementById('codePatchContent');
   const gbomBox = document.getElementById('gbomMarkdownContent');
 
+  // Video Player Controls
+  const btnWatchVideo = document.getElementById('btnWatchVideo');
+  const videoModal = document.getElementById('videoModalSection');
+  const btnCloseVideo = document.getElementById('btnCloseVideo');
+  const videoPlayer = document.getElementById('demoVideoPlayer');
+
+  if (btnWatchVideo && videoModal) {
+    btnWatchVideo.addEventListener('click', () => {
+      videoModal.classList.remove('hidden');
+      videoModal.scrollIntoView({ behavior: 'smooth' });
+      if (videoPlayer) videoPlayer.play();
+    });
+    if (btnCloseVideo) {
+      btnCloseVideo.addEventListener('click', () => {
+        videoModal.classList.add('hidden');
+        if (videoPlayer) videoPlayer.pause();
+      });
+    }
+  }
+
   btnClose.addEventListener('click', () => {
     section.classList.add('hidden');
   });

@@ -234,6 +234,17 @@ body {
   box-shadow: 0 6px 25px rgba(0, 229, 153, 0.5);
 }
 
+.btn-video {
+  background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+  color: #FFFFFF;
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.35);
+}
+
+.btn-video:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(59, 130, 246, 0.5);
+}
+
 .btn-secondary {
   background: var(--bg-surface);
   color: var(--text-primary);
