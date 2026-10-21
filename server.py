@@ -10,6 +10,7 @@ import http.server
 import socketserver
 import json
 import os
+import sys
 import urllib.parse
 from typing import Dict, Any
 
@@ -133,13 +134,18 @@ class CarbonZeroHandler(http.server.SimpleHTTPRequestHandler):
 
 
 def start_server():
+    if hasattr(sys.stdout, 'reconfigure'):
+        try:
+            sys.stdout.reconfigure(encoding='utf-8')
+        except Exception:
+            pass
     socketserver.TCPServer.allow_reuse_address = True
     with socketserver.TCPServer(("", PORT), CarbonZeroHandler) as httpd:
-        print(f"============================================================")
-        print(f"🌱 CarbonZero Duo Server running on http://localhost:{PORT}")
-        print(f"📡 Serving Web Dashboard & MCP REST API")
-        print(f"🚀 Deployable to Google Cloud Run")
-        print(f"============================================================")
+        print("============================================================")
+        print(f"[CarbonZero Duo] Server running on http://localhost:{PORT}")
+        print("[CarbonZero Duo] Serving Web Dashboard & MCP REST API")
+        print("[CarbonZero Duo] Deployable to Google Cloud Run")
+        print("============================================================")
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:
