@@ -1,0 +1,4 @@
+# Core runtime utilizes Python 3.12 Standard Library for zero-dependency execution.
+# Optional testing & deployment utilities:
+pytest>=8.0.0
+requests>=2.31.0

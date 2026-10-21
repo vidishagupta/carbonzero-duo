@@ -1,0 +1,85 @@
+# ==============================================================================
+# GitLab Duo Agent Platform: Custom Autonomous Flow Definition
+# Hackathon Track: Life After Code - The GitLab Transcend Hackathon
+# Category: Most Environmentally Impactful Project (Green Agents) & Supervised Flow
+# ==============================================================================
+
+version: "1.0"
+name: "carbonzero-autopilot"
+description: "Autonomous GreenOps DevSecOps agent that audits CI/CD carbon intensity, right-sizes Kubernetes specs, and certifies Green Bills of Materials (GBOM)."
+
+# Event Triggers: kicks off after developer code has been pushed
+triggers:
+  - event: "merge_request.created"
+  - event: "merge_request.updated"
+  - event: "pipeline.scheduled"
+    cron: "0 2 * * *" # Daily 2 AM UTC low-carbon audit
+
+# MCP Tool Servers configured for this Duo Agent
+mcp_servers:
+  - name: "carbonzero-engine"
+    command: "python"
+    args: ["mcp_server.py"]
+    env:
+      GCP_DEFAULT_REGION: "us-central1"
+      CARBON_OPTIMIZATION_LEVEL: "aggressive"
+
+# Autonomous Multi-Stage DevSecOps Workflow
+workflow:
+  # Stage 1: Telemetry & CI/CD Runner Emissions Analysis
+  - step: "analyze_runner_carbon"
+    agent: "gitlab-duo"
+    action: "call_mcp_tool"
+    tool: "optimize_pipeline_schedule"
+    parameters:
+      duration_minutes: "{{ pipeline.duration_minutes }}"
+      vcpus: 4
+      ram_gb: 16
+      current_region: "us-central1"
+    output_variable: "ci_carbon_report"
+
+  # Stage 2: Container Base Image & Kubernetes Right-Sizing
+  - step: "audit_workload_efficiency"
+    agent: "gitlab-duo"
+    action: "call_mcp_tool"
+    tool: "audit_container_and_k8s"
+    parameters:
+      dockerfile_content: "{{ repository.files['Dockerfile'] }}"
+      k8s_manifest: "{{ repository.files['k8s/deployment.yaml'] }}"
+    output_variable: "k8s_audit_report"
+
+  # Stage 3: Dynamic Regional Re-routing
+  - step: "select_cleanest_gcp_region"
+    agent: "gitlab-duo"
+    action: "call_mcp_tool"
+    tool: "get_grid_carbon_intensity"
+    parameters:
+      region: "europe-north1"
+    output_variable: "cleanest_region_telemetry"
+
+  # Stage 4: Cryptographic GBOM Attestation
+  - step: "generate_gbom_attestation"
+    agent: "gitlab-duo"
+    action: "call_mcp_tool"
+    tool: "generate_gbom_attestation"
+    parameters:
+      project_name: "{{ project.name }}"
+      commit_sha: "{{ commit.sha }}"
+    output_variable: "gbom_markdown"
+
+  # Stage 5: MR Comment & Interactive Right-Sizing Patch
+  - step: "post_merge_request_review"
+    agent: "gitlab-duo"
+    action: "gitlab.merge_request.post_comment"
+    parameters:
+      merge_request_iid: "{{ merge_request.iid }}"
+      body: "{{ gbom_markdown.gbom_markdown }}"
+
+# Human-In-The-Loop Supervision Checkpoint
+supervision:
+  enabled: true
+  auto_merge_allowed_if:
+    tests_passing: true
+    annual_co2_saved_kg_greater_than: 100
+  reviewers:
+    - "{{ merge_request.author }}"

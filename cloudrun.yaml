@@ -1,0 +1,35 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: carbonzero-duo-agent
+  annotations:
+    run.googleapis.com/ingress: all
+    run.googleapis.com/description: "CarbonZero Duo Agent on Google Cloud Run"
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "0"
+        autoscaling.knative.dev/maxScale: "5"
+        run.googleapis.com/execution-environment: gen2
+        run.googleapis.com/cpu-throttling: "true" # Scale to zero to eliminate idle carbon
+    spec:
+      containerConcurrency: 80
+      timeoutSeconds: 300
+      containers:
+      - image: gcr.io/PROJECT_ID/carbonzero-duo:latest
+        ports:
+        - name: http1
+          containerPort: 8080
+        resources:
+          limits:
+            cpu: "1000m"
+            memory: "512Mi"
+          requests:
+            cpu: "250m"
+            memory: "256Mi"
+        env:
+        - name: CARBON_OPTIMIZATION_LEVEL
+          value: "aggressive"
+        - name: GCP_DEFAULT_REGION
+          value: "europe-north1"
